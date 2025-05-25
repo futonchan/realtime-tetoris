@@ -973,6 +973,8 @@ function App() {
     </div>
   );
   
+  const [inputName, setInputName] = useState('');
+  
   const renderMultiplayerRoomsScreen = () => (
     <div className="multiplayer-container">
       <h1>Multiplayer Rooms</h1>
@@ -983,10 +985,17 @@ function App() {
             type="text"
             className="player-name-input"
             placeholder="名前を入力してください (最大20文字)"
-            value={playerName}
-            onChange={(e) => setPlayerName(e.target.value)}
+            value={inputName}
+            onChange={(e) => setInputName(e.target.value)}
             maxLength={20}
           />
+          <button
+            className="menu-button"
+            onClick={() => setPlayerName(inputName)}
+            disabled={!inputName}
+          >
+            OK
+          </button>
         </div>
       ) : (
         <>
