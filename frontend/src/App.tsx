@@ -207,7 +207,7 @@ const PIECES = {
 
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 20;
-const INITIAL_SPEED = 1000; // ms
+const INITIAL_SPEED = 500; // ms - faster initial speed for standard Tetris feel
 const SPEED_INCREASE = 0.8; // 20% faster per level
 const LEVEL_LINES = 10; // Lines to clear for next level
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
