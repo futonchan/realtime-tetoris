@@ -370,24 +370,6 @@ function App() {
     }
   }, [bgmVolume]);
   
-  const startGameLoop = useCallback(() => {
-    if (gameLoopRef.current) {
-      clearInterval(gameLoopRef.current);
-    }
-    
-    gameLoopRef.current = window.setInterval(() => {
-      if (!isPaused && !gameOver) {
-        movePiece(0, 1);
-      }
-    }, gameSpeed);
-    
-    return () => {
-      if (gameLoopRef.current) {
-        clearInterval(gameLoopRef.current);
-      }
-    };
-  }, [gameSpeed, isPaused, gameOver]);
-  
   const movePiece = useCallback((moveX: number, moveY: number) => {
     if (!currentPiece || gameOver || isPaused) return;
     
@@ -493,6 +475,24 @@ function App() {
       }
     }
   }, [board, currentPiece, gameOver, isPaused, level, linesCleared, nextPiece, score, seVolume, socket, currentRoom]);
+  const startGameLoop = useCallback(() => {
+    if (gameLoopRef.current) {
+      clearInterval(gameLoopRef.current);
+    }
+    
+    gameLoopRef.current = window.setInterval(() => {
+      if (!isPaused && !gameOver) {
+        movePiece(0, 1);
+      }
+    }, gameSpeed);
+    
+    return () => {
+      if (gameLoopRef.current) {
+        clearInterval(gameLoopRef.current);
+      }
+    };
+  }, [gameSpeed, isPaused, gameOver, movePiece]);
+
   
   const rotatePiece = useCallback(() => {
     if (!currentPiece || gameOver || isPaused) return;
