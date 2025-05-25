@@ -520,9 +520,101 @@ function App() {
     }
     
     if (dropDistance > 0) {
-      movePiece(0, dropDistance);
+      const droppedPiece = {
+        ...currentPiece,
+        position: {
+          x: currentPiece.position.x,
+          y: currentPiece.position.y + dropDistance
+        }
+      };
+      
+      const newBoard = placePieceOnBoard(board, droppedPiece);
+      
+      if (dropSound.current) {
+        dropSound.current.volume = seVolume / 100;
+        dropSound.current.currentTime = 0;
+        dropSound.current.play();
+      }
+      
+      const { newBoard: boardAfterLineCheck, linesCleared: newLinesCleared } = checkCompletedLines(newBoard);
+      
+      if (newLinesCleared > 0) {
+        if (clearSound.current) {
+          clearSound.current.volume = seVolume / 100;
+          clearSound.current.currentTime = 0;
+          clearSound.current.play();
+        }
+        
+        const newTotalLinesCleared = linesCleared + newLinesCleared;
+        const newLevel = Math.floor(newTotalLinesCleared / LEVEL_LINES);
+        const newScore = score + calculateScore(newLinesCleared, level);
+        
+        setLinesCleared(newTotalLinesCleared);
+        setLevel(newLevel);
+        setScore(newScore);
+        setGameSpeed(INITIAL_SPEED * Math.pow(SPEED_INCREASE, newLevel));
+        
+        if (socket && currentRoom) {
+          socket.emit('message', {
+            type: 'game_state_update',
+            update: {
+              type: 'lines_cleared',
+              lines_cleared: newLinesCleared
+            }
+          });
+          
+          socket.emit('message', {
+            type: 'game_state_update',
+            update: {
+              type: 'score_update',
+              score: newScore
+            }
+          });
+        }
+      }
+      
+      setBoard(boardAfterLineCheck);
+      
+      const newPiece = {
+        type: nextPiece,
+        position: { x: 3, y: 0 },
+        rotation: 0
+      };
+      
+      if (!canPieceMove(boardAfterLineCheck, newPiece, 0, 0)) {
+        setGameOver(true);
+        
+        if (gameOverSound.current) {
+          gameOverSound.current.volume = seVolume / 100;
+          gameOverSound.current.currentTime = 0;
+          gameOverSound.current.play();
+        }
+        
+        if (bgmRef.current) {
+          bgmRef.current.pause();
+        }
+        
+        if (socket && currentRoom) {
+          socket.emit('message', {
+            type: 'game_over'
+          });
+        }
+      } else {
+        setCurrentPiece(newPiece);
+        setNextPiece(getRandomPiece());
+        
+        if (socket && currentRoom) {
+          socket.emit('message', {
+            type: 'game_state_update',
+            update: {
+              type: 'board_update',
+              board: boardAfterLineCheck
+            }
+          });
+        }
+      }
     }
-  }, [board, currentPiece, gameOver, isPaused, movePiece]);
+  }, [board, currentPiece, gameOver, isPaused, dropSound, clearSound, gameOverSound, bgmRef, seVolume, linesCleared, level, score, nextPiece, socket, currentRoom]);
   
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
