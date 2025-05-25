@@ -18,6 +18,7 @@ type Room = {
   players: string[];
   ready_players: string[];
   game_in_progress: boolean;
+  room_master: string;
 };
 
 const PIECES = {
@@ -1009,6 +1010,17 @@ function App() {
               rooms.map((room) => (
                 <div key={room.id} className="room-item" onClick={() => joinRoom(room.id)}>
                   <span>{room.name}</span>
+                  <div className="player-list-preview">
+                    {room.players.length === 0 ? (
+                      <span>No players</span>
+                    ) : (
+                      room.players.map((player, index) => (
+                        <span key={player} className="player-name-preview">
+                          {player}{index < room.players.length - 1 ? ', ' : ''}
+                        </span>
+                      ))
+                    )}
+                  </div>
                   <span>{room.players.length}/2 Players</span>
                 </div>
               ))
@@ -1027,6 +1039,14 @@ function App() {
     </div>
   );
   
+  const startGame = () => {
+    if (!socket || !currentRoom) return;
+    
+    socket.emit('message', {
+      type: 'room_master_start_game'
+    });
+  };
+
   const renderMultiplayerLobbyScreen = () => (
     <div className="multiplayer-container">
       <h1>Game Lobby</h1>
@@ -1036,7 +1056,11 @@ function App() {
           <div className="player-list">
             {currentRoom.players.map((player) => (
               <div key={player} className="player-item">
-                <span>{player} {player === playerName ? '(You)' : ''}</span>
+                <span>
+                  {player} 
+                  {player === playerName ? '(You)' : ''} 
+                  {player === currentRoom.room_master ? '(Room Master)' : ''}
+                </span>
                 <span className={`ready-status ${currentRoom.ready_players.includes(player) ? 'ready' : 'not-ready'}`}>
                   {currentRoom.ready_players.includes(player) ? 'Ready' : 'Not Ready'}
                 </span>
@@ -1049,6 +1073,17 @@ function App() {
           >
             {isReady ? 'Ready!' : 'Ready?'}
           </button>
+          {currentRoom.room_master === playerName && 
+           currentRoom.ready_players.length === currentRoom.players.length && 
+           currentRoom.players.length === 2 && (
+            <button
+              className="menu-button"
+              onClick={startGame}
+              style={{marginTop: '10px'}}
+            >
+              GAME START
+            </button>
+          )}
         </div>
       )}
       <button className="back-button" onClick={() => {

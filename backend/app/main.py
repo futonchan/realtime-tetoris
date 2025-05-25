@@ -42,7 +42,8 @@ class ConnectionManager:
                 "name": f"Room {room_id}",
                 "players": [],
                 "ready_players": set(),
-                "game_in_progress": False
+                "game_in_progress": False,
+                "room_master": player_name
             }
             
         self.rooms[room_id]["players"].append(player_name)
@@ -105,8 +106,6 @@ class ConnectionManager:
                 
                 await self.broadcast_room_update(room_id)
                 
-                if len(self.rooms[room_id]["ready_players"]) == 2 and len(self.rooms[room_id]["players"]) == 2:
-                    await self.start_game(room_id)
     
     async def start_game(self, room_id: str):
         if room_id in self.rooms:
@@ -172,6 +171,20 @@ class ConnectionManager:
                     "update": update
                 })
     
+    async def room_master_start_game(self, websocket: WebSocket, room_id: str):
+        if room_id in self.active_connections and websocket in self.active_connections[room_id]:
+            player_name = self.active_connections[room_id][websocket]
+            
+            if room_id in self.rooms:
+                if self.rooms[room_id]["room_master"] != player_name:
+                    await websocket.send_text(json.dumps({"type": "error", "message": "Only room master can start game"}))
+                    return
+                
+                if len(self.rooms[room_id]["ready_players"]) == len(self.rooms[room_id]["players"]) and len(self.rooms[room_id]["players"]) == 2:
+                    await self.start_game(room_id)
+                else:
+                    await websocket.send_text(json.dumps({"type": "error", "message": "All players must be ready"}))
+    
     async def game_over(self, websocket: WebSocket, room_id: str):
         if room_id in self.active_connections and websocket in self.active_connections[room_id]:
             player_name = self.active_connections[room_id][websocket]
@@ -214,7 +227,8 @@ async def get_rooms():
             "id": room_id,
             "name": room["name"],
             "players": room["players"],
-            "game_in_progress": room["game_in_progress"]
+            "game_in_progress": room["game_in_progress"],
+            "room_master": room.get("room_master", "")
         })
     return rooms
 
@@ -228,7 +242,8 @@ async def create_room(room: RoomInfo):
         "name": room.name,
         "players": [],
         "ready_players": set(),
-        "game_in_progress": False
+        "game_in_progress": False,
+        "room_master": ""  # Will be set when the first player joins
     }
     
     return {"status": "success", "room": manager.rooms[room.id]}
@@ -247,6 +262,8 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, player_name: st
             
             if message["type"] == "player_ready":
                 await manager.set_player_ready(websocket, room_id, message["ready"])
+            elif message["type"] == "room_master_start_game":
+                await manager.room_master_start_game(websocket, room_id)
             elif message["type"] == "game_state_update":
                 await manager.update_game_state(websocket, room_id, message["update"])
             elif message["type"] == "game_over":
