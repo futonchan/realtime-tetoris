@@ -1016,7 +1016,7 @@ function App() {
                     ) : (
                       room.players.map((player, index) => (
                         <span key={player} className="player-name-preview">
-                          {player}{index < room.players.length - 1 ? ', ' : ''}
+                          {player === room.room_master ? '👑 ' : ''}{player}{index < room.players.length - 1 ? ', ' : ''}
                         </span>
                       ))
                     )}
@@ -1057,9 +1057,8 @@ function App() {
             {currentRoom.players.map((player) => (
               <div key={player} className="player-item">
                 <span>
-                  {player} 
-                  {player === playerName ? '(You)' : ''} 
-                  {player === currentRoom.room_master ? '(Room Master)' : ''}
+                  {player === currentRoom.room_master ? '👑 ' : ''}{player} 
+                  {player === playerName ? '(You)' : ''}
                 </span>
                 <span className={`ready-status ${currentRoom.ready_players.includes(player) ? 'ready' : 'not-ready'}`}>
                   {currentRoom.ready_players.includes(player) ? 'Ready' : 'Not Ready'}
