@@ -982,17 +982,11 @@ function App() {
           <input
             type="text"
             className="player-name-input"
-            placeholder="Your name"
+            placeholder="名前を入力してください (最大20文字)"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
+            maxLength={20}
           />
-          <button
-            className="menu-button"
-            onClick={() => {}}
-            disabled={!playerName}
-          >
-            Continue
-          </button>
         </div>
       ) : (
         <>
