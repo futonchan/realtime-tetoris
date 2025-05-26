@@ -8,12 +8,28 @@
 - **言語**: TypeScript
 - **フレームワーク**: React
 - **ビルドツール**: Vite
-- **通信**: Socket.io-client
+- **状態管理**: ReactのuseState/useReducer等（Redux等は未使用）
+- **通信**: [socket.io-client](https://socket.io/docs/v4/client-api/)（WebSocketベースのリアルタイム通信）
+- **UI/スタイル**: CSS Modules, Tailwind CSS（`frontend/tailwind.config.js` 参照）
+- **音楽・効果音**: HTML5 Audio API
+- **主な依存ライブラリ**: 
+  - react, react-dom
+  - socket.io-client
+  - vite
+  - tailwindcss
+  - その他は`frontend/package.json`参照
 
 ### バックエンド
-- **言語**: Python
+- **言語**: Python 3.12
 - **フレームワーク**: FastAPI
-- **WebSocket**: FastAPI WebSockets
+- **WebSocket**: FastAPIのWebSocketサポート
+- **ASGIサーバ**: Uvicorn
+- **依存管理**: poetry または pip（`backend/requirements.txt`）
+- **主な依存ライブラリ**:
+  - fastapi
+  - uvicorn
+  - python-socketio
+  - その他は`backend/requirements.txt`参照
 - **デプロイ**: Fly.io
 
 ## フォルダ構成
@@ -22,7 +38,7 @@
 tetris-game/
 ├── frontend/             # フロントエンドのコード
 │   ├── public/           # 静的ファイル（音楽、画像など）
-│   ├── src/              # ソースコード
+│   ├── src/              # ソースコード（Reactコンポーネント、hooks、libなど）
 │   │   ├── App.tsx       # メインのゲームロジック
 │   │   ├── App.css       # スタイル
 │   │   └── main.tsx      # エントリーポイント
@@ -30,9 +46,10 @@ tetris-game/
 │   └── vite.config.ts    # Vite設定
 │
 ├── backend/              # バックエンドのコード
-│   ├── app/              # アプリケーションコード
+│   ├── app/              # アプリケーションコード（FastAPI本体）
 │   │   └── main.py       # FastAPIアプリケーション
 │   └── requirements.txt  # Pythonの依存関係
+│   └── tests/            # バックエンドのテストコード（pytest等で実行可能）
 │
 └── README.md             # このファイル
 ```
@@ -60,7 +77,7 @@ cd tetris-game/frontend
 # 依存関係のインストール
 npm install
 
-# 開発サーバーの起動
+# 開発サーバーの起動（デフォルト: http://localhost:3000）
 npm run dev
 ```
 
@@ -73,9 +90,12 @@ cd tetris-game/backend
 # 依存関係のインストール
 pip install -r requirements.txt
 
-# サーバーの起動
+# サーバーの起動（デフォルト: http://localhost:8000）
 uvicorn app.main:app --reload
 ```
+
+- **WebSocket通信**: サーバ・クライアント両方を同時に起動して動作確認してください。
+- **CORS**: 開発時はCORS設定に注意（FastAPI側で許可設定済み）。
 
 ## デプロイ先
 
@@ -96,11 +116,23 @@ uvicorn app.main:app --reload
 5. 全員がREADYになったら、ルームマスターがGAME STARTボタンをクリック
 6. 対戦開始！
 
-## 開発者向け情報
+## コーディング規約・推奨ツール
+- **エディタ**: VS Code推奨。TypeScript, Python拡張を導入。
+- **Lint/Format**: ESLint, Prettier（フロントエンド）、blackやflake8（バックエンド）
+- **コミットメッセージ**: 日本語/英語どちらでも可。分かりやすく記述。
+- **その他**: 必要に応じて`README.md`や各種設定ファイルを参照。
 
-- ルームマスター: 部屋を作成した最初のプレイヤーがルームマスターになります
-- WebSocket通信: フロントエンドとバックエンド間のリアルタイム通信にはWebSocketを使用
-- 音楽と効果音: ゲーム内の音楽と効果音はHTML5 Audioを使用
+## 開発Tips・補足
+- ルームマスター: 部屋を作成した最初のプレイヤーがルームマスターになります。
+- WebSocket通信: フロントエンドとバックエンド間のリアルタイム通信にはWebSocket（socket.io, FastAPI WebSockets）を使用。
+- 音楽と効果音: ゲーム内の音楽と効果音はHTML5 Audioを使用。
+- ポート: デフォルトでフロントエンドは3000番、バックエンドは8000番で起動。
+- テスト: バックエンドはpytest等でテスト可能。
+
+## 参考
+- [React公式ドキュメント](https://ja.react.dev/)
+- [FastAPI公式ドキュメント](https://fastapi.tiangolo.com/ja/)
+- [Socket.io公式ドキュメント](https://socket.io/docs/v4/)
 
 ## Devinについて
 このゲームは[Devin](https://devin.ai/)を用いて日本語チャットを30分間行うことで０から作成されたテトリスゲームです。
