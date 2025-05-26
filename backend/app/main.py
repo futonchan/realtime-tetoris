@@ -1,3 +1,6 @@
+# --- Copilot Agent touch: 2025-05-26 ---
+# このコメントは動作確認用です。アプリの挙動には影響ありません。
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, List, Optional, Set, Any

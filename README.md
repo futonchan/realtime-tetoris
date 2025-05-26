@@ -139,3 +139,40 @@ uvicorn app.main:app --reload
 8.96ACUs(22ドル=3,000円)を消化して作成されました。お財布が痛いです。
 作成時間はだいたい30分でした。
 続きはGithub Copilot Agentで作ってみようと思っています（2025/05/26時点ではCopilot AgentはPreview版）
+
+## Github Copilot Chat(Agentモード)について
+Agentが追加するコミットは下記Git設定をして、Agentがコミットしたことを後からわかるようにする。
+`git config user.name "Copilot Agent" && git config user.email "copilot-agent@example.com"`
+
+---
+
+## 【初心者向け】Fly.ioでのバックエンドデプロイ・設定のポイント
+
+### Fly.ioとは？
+- 世界中にアプリを簡単に公開できるクラウドサービスです。
+- Dockerイメージを使ってPython（FastAPIなど）アプリをデプロイできます。
+
+### バックエンド（FastAPI）をFly.ioで動かすための注意点
+- **必ず0.0.0.0:8000でリッスンすること！**
+    - Fly.ioは外部からのリクエストを`0.0.0.0:8000`で受け付けるアプリにしかルーティングしません。
+    - DockerfileのCMDや起動コマンドで`--host 0.0.0.0 --port 8000`を指定してください。
+    - 例: `CMD ["/app/.venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`
+
+### fly.tomlの設定例
+```toml
+[http_service]
+  internal_port = 8000  # ← FastAPIのリッスンポートと一致させる
+```
+
+### デプロイ時のよくあるトラブル
+- Fly.ioの警告「The app is not listening on the expected address...」が出た場合は、
+  - CMDや起動コマンドを再確認（`--host 0.0.0.0 --port 8000`が必須）
+  - fly.tomlの`internal_port`が8000になっているか確認
+- アクセスがないと自動でマシンがスリープします（fly.tomlの`auto_stop_machines`設定）。
+
+### フロントエンドとの連携
+- フロントエンドのAPIリクエスト先（.envの`VITE_BACKEND_URL`など）が、Fly.ioで公開したバックエンドURL（例: `https://tetris-multiplayer-app.fly.dev`）になっているか確認しましょう。
+
+---
+
+困ったときは公式ドキュメントや`fly logs`コマンドでログを確認すると原因特定がしやすいです。
