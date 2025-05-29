@@ -99,7 +99,7 @@ uvicorn app.main:app --reload
 
 ## デプロイ先
 
-- **フロントエンド**: https://frontend-gjwgxomd8-futonchans-projects.vercel.app
+- **フロントエンド**: https://frontend-futonchans-projects.vercel.app
 - **バックエンド**: https://tetris-multiplayer-app.fly.dev
 
 ## ゲームプレイ方法
