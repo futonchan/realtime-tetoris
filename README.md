@@ -129,6 +129,30 @@ uvicorn app.main:app --reload
 - ポート: デフォルトでフロントエンドは3000番、バックエンドは8000番で起動。
 - テスト: バックエンドはpytest等でテスト可能。
 
+### 【トラブルシューティング】ViteサーバーにChromeからアクセスできない問題
+
+**症状**: VSCodeのシンプルブラウザーでは動作するが、ChromeでlocalHost:5173にアクセスすると接続できない
+
+**原因**: Viteサーバーがデフォルトで`::1`（IPv6のlocalhost）でのみリッスンしており、IPv4のlocalhostからのアクセスを受け付けていない
+
+**解決策**: `vite.config.ts`に以下の設定を追加
+```typescript
+export default defineConfig({
+  // ...existing config...
+  server: {
+    host: '0.0.0.0',  // すべてのネットワークインターフェースでリッスン
+    port: 5173,       // ポート番号を明示的に指定
+  },
+})
+```
+
+**設定変更後の手順**:
+1. 既存のViteサーバーを停止（`Ctrl+C`またはプロセスをkill）
+2. `npm run dev`で再起動
+3. Chromeで`http://localhost:5173`にアクセス
+
+**確認方法**: `netstat -an | grep 5173`でViteサーバーがIPv4（`0.0.0.0:5173`）でリッスンしていることを確認
+
 ## 参考
 - [React公式ドキュメント](https://ja.react.dev/)
 - [FastAPI公式ドキュメント](https://fastapi.tiangolo.com/ja/)
