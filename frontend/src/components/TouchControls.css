@@ -1,0 +1,162 @@
+.touch-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  height: 120px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.touch-controls-left {
+  display: flex;
+  align-items: center;
+}
+
+.touch-controls-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dpad {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 120px;
+  height: 120px;
+  gap: 2px;
+}
+
+.dpad-button {
+  background-color: rgba(44, 44, 44, 0.9);
+  border: 2px solid #00ffff;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+.dpad-button:active {
+  background-color: #00ffff;
+  color: #121212;
+  transform: scale(0.95);
+}
+
+.dpad-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dpad-up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.dpad-middle {
+  grid-column: 1 / 4;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+}
+
+.dpad-left {
+  grid-column: 1;
+}
+
+.dpad-right {
+  grid-column: 3;
+}
+
+.dpad-down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.action-button {
+  width: 80px;
+  height: 50px;
+  background-color: rgba(44, 44, 44, 0.9);
+  border: 2px solid #00ffff;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+.action-button:active {
+  background-color: #00ffff;
+  color: #121212;
+  transform: scale(0.95);
+}
+
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rotate-button {
+  background-color: rgba(128, 0, 128, 0.9);
+  border-color: #ff00ff;
+}
+
+.rotate-button:active {
+  background-color: #ff00ff;
+}
+
+.drop-button {
+  background-color: rgba(255, 165, 0, 0.9);
+  border-color: #ffa500;
+}
+
+.drop-button:active {
+  background-color: #ffa500;
+}
+
+/* Hide controls on desktop */
+@media (min-width: 769px) {
+  .touch-controls {
+    display: none;
+  }
+}
+
+/* Adjust for very small screens */
+@media (max-width: 480px) {
+  .touch-controls {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 100px;
+  }
+  
+  .dpad {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .dpad-button {
+    font-size: 16px;
+  }
+  
+  .action-button {
+    width: 70px;
+    height: 45px;
+    font-size: 12px;
+  }
+}

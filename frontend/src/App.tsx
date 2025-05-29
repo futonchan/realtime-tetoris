@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { TouchControls } from './components/TouchControls';
+import { useIsMobile } from './hooks/use-mobile';
 import './App.css';
 
 type PieceType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
@@ -318,6 +320,7 @@ const calculateScore = (linesCleared: number, level: number): number => {
 };
 
 function App() {
+  const isMobile = useIsMobile();
   const [screen, setScreen] = useState<ScreenType>('start');
   const [board, setBoard] = useState<Board>(createEmptyBoard());
   const [currentPiece, setCurrentPiece] = useState<Piece | null>(null);
@@ -959,6 +962,14 @@ function App() {
           </div>
         </div>
       </div>
+      {isMobile && (
+        <TouchControls
+          onMove={movePiece}
+          onRotate={rotatePiece}
+          onHardDrop={hardDropPiece}
+          disabled={gameOver || isPaused}
+        />
+      )}
       {gameOver && (
         <div className="game-over">
           <div className="game-over-text">GAME OVER</div>
@@ -1112,6 +1123,14 @@ function App() {
           </div>
         </div>
       </div>
+      {isMobile && (
+        <TouchControls
+          onMove={movePiece}
+          onRotate={rotatePiece}
+          onHardDrop={hardDropPiece}
+          disabled={gameOver || isPaused}
+        />
+      )}
       {gameOver && (
         <div className="game-over">
           <div className="game-over-text">GAME OVER</div>
