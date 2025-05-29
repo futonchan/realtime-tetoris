@@ -14,7 +14,6 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
   onHardDrop,
   disabled = false
 }) => {
-  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const repeatIntervalRef = useRef<number | null>(null);
 
   const handleTouchStart = useCallback((action: () => void, repeat = false) => {

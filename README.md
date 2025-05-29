@@ -99,8 +99,8 @@ uvicorn app.main:app --reload
 
 ## デプロイ先
 
-- **フロントエンド**: https://tetris-multiplayer-app-5a534qjj.devinapps.com
-- **バックエンド**: https://app-ytrdzbgw.fly.dev
+- **フロントエンド**: https://frontend-gjwgxomd8-futonchans-projects.vercel.app
+- **バックエンド**: https://tetris-multiplayer-app.fly.dev
 
 ## ゲームプレイ方法
 

@@ -89,6 +89,7 @@ class GameManager:
             
         return True
 
+# Create global game manager instance
 manager = GameManager()
 
 class RoomInfo(BaseModel):
@@ -97,13 +98,26 @@ class RoomInfo(BaseModel):
     players: List[str]
     game_in_progress: bool
 
+# Basic API endpoints
+@app.get("/")
+async def read_root():
+    return {"message": "Tetris Multiplayer Backend is running", "status": "ok"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "tetris-backend"}
+
+@app.get("/rooms")
+async def get_rooms():
+    return {"rooms": [room for room in manager.rooms.values()]}
+
 # REST API endpoints
 @app.get("/healthz")
 async def healthz():
     return {"status": "ok"}
 
 @app.get("/api/rooms")
-async def get_rooms():
+async def api_get_rooms():
     rooms = []
     for room_id, room in manager.rooms.items():
         rooms.append({
